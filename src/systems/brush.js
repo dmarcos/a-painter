@@ -281,6 +281,10 @@ AFRAME.registerSystem('brush', {
         vec: new THREE.Vector3(0, 0.7, 1),
         mult: -0.03
       },
+      'vive-tracker-controls': {
+        vec: new THREE.Vector3(0, 0.7, 1),
+        mult: -0.03
+      },
       'oculus-touch-controls': {
         vec: new THREE.Vector3(0, 0, 2.8),
         mult: -0.05
@@ -291,7 +295,7 @@ AFRAME.registerSystem('brush', {
       if (!this.controllerName) {
         return position;
       }
-
+      debugger;
       var offsets = controllerOffset[this.controllerName];
       var pointer = offsets.vec
         .clone()
