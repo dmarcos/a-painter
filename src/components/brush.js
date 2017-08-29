@@ -9,6 +9,8 @@ AFRAME.registerComponent('brush', {
   init: function () {
     var data = this.data;
     this.color = new THREE.Color(data.color);
+    this.onKeydown = this.onKeydown.bind(this);
+    window.addEventListener('keydown', this.onKeydown);
 
     this.el.emit('brushcolor-changed', {color: this.color});
     this.el.emit('brushsize-changed', {brushSize: data.size});
@@ -96,5 +98,12 @@ AFRAME.registerComponent('brush', {
   startNewStroke: function () {
     this.currentStroke = this.system.addNewStroke(this.data.brush, this.color, this.data.size);
     this.el.emit('stroke-started', {entity: this.el, stroke: this.currentStroke});
+  },
+
+  onKeydown: function (evt) {
+    var colors = ['red', 'green', 'blue']
+    var selectedColor = colors[evt.keyCode - 49];
+    if (!selectedColor) { return; }
+    this.el.setAttribute('brush', 'color', selectedColor);
   }
 });

@@ -126,6 +126,7 @@ AFRAME.registerComponent('ui', {
   },
 
   bindMethods: function () {
+    this.onBrushColorChanged = this.onBrushColorChanged.bind(this);
     this.onComponentChanged = this.onComponentChanged.bind(this);
     this.onTriggerChanged = this.onTriggerChanged.bind(this);
     this.onIntersection = this.onIntersection.bind(this);
@@ -478,6 +479,7 @@ AFRAME.registerComponent('ui', {
       this.addToggleEvent();
     }
 
+    el.addEventListener('brushcolor-changed', this.onBrushColorChanged);
     el.addEventListener('model-loaded', this.onModelLoaded);
     el.addEventListener('raycaster-intersection', this.onIntersection);
     el.addEventListener('raycaster-intersection-cleared', this.onIntersectionCleared);
@@ -495,6 +497,7 @@ AFRAME.registerComponent('ui', {
       this.removeToggleEvent();
     }
 
+    el.removeEventListener('brushcolor-changed', this.onBrushColorChanged);
     el.removeEventListener('raycaster-intersection', this.onIntersection);
     el.removeEventListener('raycaster-intersection-cleared', this.onIntersectionCleared);
     el.removeEventListener('raycaster-intersected', this.onIntersected);
@@ -849,6 +852,12 @@ AFRAME.registerComponent('ui', {
     // Update color brightness
     this.objects.hueWheel.material.uniforms['brightness'].value = this.hsv.v;
     this.objects.brightnessCursor.rotation.y = this.hsv.v * 1.5 - 1.5;
+  },
+
+  onBrushColorChanged: function (evt) {
+    var color = evt.detail.color;
+    if (!color) { return; }
+    this.updateColorUI(color);
   },
 
   updateBrushSelector: function (brush) {

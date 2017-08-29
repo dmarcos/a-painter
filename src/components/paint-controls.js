@@ -18,8 +18,9 @@ AFRAME.registerComponent('paint-controls', {
     this.modelLoaded = false;
 
     this.onModelLoaded = this.onModelLoaded.bind(this);
-    el.addEventListener('model-loaded', this.onModelLoaded);
 
+    el.addEventListener('model-loaded', this.onModelLoaded);
+    debugger;
     el.addEventListener('controllerconnected', function (evt) {
       var controllerName = evt.detail.name;
       if (controllerName === 'oculus-touch-controls') {
