@@ -1998,6 +1998,8 @@
 	  init: function () {
 	    var data = this.data;
 	    this.color = new THREE.Color(data.color);
+	    this.onKeydown = this.onKeydown.bind(this);
+	    window.addEventListener('keydown', this.onKeydown);
 
 	    this.el.emit('brushcolor-changed', {color: this.color});
 	    this.el.emit('brushsize-changed', {brushSize: data.size});
@@ -2085,6 +2087,13 @@
 	  startNewStroke: function () {
 	    this.currentStroke = this.system.addNewStroke(this.data.brush, this.color, this.data.size);
 	    this.el.emit('stroke-started', {entity: this.el, stroke: this.currentStroke});
+	  },
+
+	  onKeydown: function (evt) {
+	    var colors = ['red', 'green', 'blue']
+	    var selectedColor = colors[evt.keyCode - 49];
+	    if (!selectedColor) { return; }
+	    this.el.setAttribute('brush', 'color', selectedColor);
 	  }
 	});
 
@@ -2266,8 +2275,9 @@
 	    this.modelLoaded = false;
 
 	    this.onModelLoaded = this.onModelLoaded.bind(this);
-	    el.addEventListener('model-loaded', this.onModelLoaded);
 
+	    el.addEventListener('model-loaded', this.onModelLoaded);
+	    debugger;
 	    el.addEventListener('controllerconnected', function (evt) {
 	      var controllerName = evt.detail.name;
 	      if (controllerName === 'oculus-touch-controls') {
@@ -2590,6 +2600,7 @@
 	  },
 
 	  bindMethods: function () {
+	    this.onBrushColorChanged = this.onBrushColorChanged.bind(this);
 	    this.onComponentChanged = this.onComponentChanged.bind(this);
 	    this.onTriggerChanged = this.onTriggerChanged.bind(this);
 	    this.onIntersection = this.onIntersection.bind(this);
@@ -2942,6 +2953,7 @@
 	      this.addToggleEvent();
 	    }
 
+	    el.addEventListener('brushcolor-changed', this.onBrushColorChanged);
 	    el.addEventListener('model-loaded', this.onModelLoaded);
 	    el.addEventListener('raycaster-intersection', this.onIntersection);
 	    el.addEventListener('raycaster-intersection-cleared', this.onIntersectionCleared);
@@ -2959,6 +2971,7 @@
 	      this.removeToggleEvent();
 	    }
 
+	    el.removeEventListener('brushcolor-changed', this.onBrushColorChanged);
 	    el.removeEventListener('raycaster-intersection', this.onIntersection);
 	    el.removeEventListener('raycaster-intersection-cleared', this.onIntersectionCleared);
 	    el.removeEventListener('raycaster-intersected', this.onIntersected);
@@ -3313,6 +3326,12 @@
 	    // Update color brightness
 	    this.objects.hueWheel.material.uniforms['brightness'].value = this.hsv.v;
 	    this.objects.brightnessCursor.rotation.y = this.hsv.v * 1.5 - 1.5;
+	  },
+
+	  onBrushColorChanged: function (evt) {
+	    var color = evt.detail.color;
+	    if (!color) { return; }
+	    this.updateColorUI(color);
 	  },
 
 	  updateBrushSelector: function (brush) {
